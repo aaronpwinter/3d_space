@@ -1,4 +1,5 @@
 from linear_algebra import Vector
+from rotation import Rotation
 from camera import Camera
 
 import pygame
@@ -54,10 +55,12 @@ class ThreeDApp:
         Runs everything before the main loop (and after __init__)
         '''
         #Camera Stuffs
-        self._cam = Camera()
+        rotation = Rotation(0,0,0)
+        self._cam = Camera(rotation = rotation)
 
         #Example shapes
-        self._rectangle = [(-50,50,20), (50,50,20),(50,-50,200),(-50,-50,200)]
+        #self._rectangle = [(-50,50,20), (50,50,20),(50,-50,200),(-50,-50,200)]
+        self._rectangle = [(-200,200,100), (200,200,100),(200,-200,100),(-200,-200,100)]
         self._rect_color = pygame.Color(255,50,50)
 
         self._resize_display(_WINDOW_SIZE)
