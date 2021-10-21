@@ -107,7 +107,8 @@ class ThreeDApp:
         if keys[pygame.K_w]:
             movement[2] = movement[2] +to_move
 
-        self._cam.move_location(Vector(*movement))
+        if movement != [0,0,0]:
+            self._cam.move_location(Vector(*movement))
 
     def _handle_mouse(self) -> None:
         '''
@@ -115,6 +116,14 @@ class ThreeDApp:
         '''
         mouse = pygame.mouse.get_pressed()
         movement = pygame.mouse.get_rel()
+
+        rot = [0,0,0]
+        sensitivity = -.005
+        if mouse[0]: #MB1 pressed
+            rot[0] = rot[0] + sensitivity*movement[1]
+            rot[1] = rot[1] + sensitivity*movement[0]
+            self._cam.rotate(rot)
+
 
     def _redraw(self) -> None:
         '''

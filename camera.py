@@ -11,7 +11,7 @@ class Camera:
         Rotate target vector by rotation (inverse)
         Find where on x,y plane the line between the target vector and focus (not the same as location) land
     '''
-    def __init__(self, location: Vector = Vector(0,0,-100), focus: Vector = Vector(*_DEFAULT_FOCUS),
+    def __init__(self, location: Vector = Vector(0,0,-10), focus: Vector = Vector(*_DEFAULT_FOCUS),
                         rotation: Rotation = Rotation(0,0,0)):
         assert location.dimension() == 3
         assert focus.dimension() == 3
@@ -45,6 +45,12 @@ class Camera:
         '''
         v = self._rot*v
         self._loc += v
+
+    def rotate(self, r: Rotation):
+        '''
+        Rotates the camera, relative to where its currently looking
+        '''
+        self._rot += r
 
 
 if __name__ == '__main__':

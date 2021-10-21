@@ -50,6 +50,15 @@ class Rotation:
         '''
         return (right*self._inv_matrix).row_vector(0)
 
+    def __add__(self, right):
+        '''
+        For adding to the rotation total.
+        '''
+        if isinstance(right, Rotation) or type(right) in {tuple, list}:
+            return Rotation(self[0]+right[0],self[1]+right[1],self[2]+right[2],self._order)
+        else:
+            return NotImplemented
+
 
 
 if __name__ == '__main__':
