@@ -60,7 +60,7 @@ class ThreeDApp:
 
         #Example shapes
         #self._rectangle = [(-50,50,20), (50,50,20),(50,-50,200),(-50,-50,200)]
-        self._rectangle = [(-200,200,100), (200,200,100),(200,-200,100),(-200,-200,100)]
+        self._rectangle = [(-200,200,1000), (200,200,1000),(200,-200,1000),(-200,-200,1000)]
         self._rect_color = pygame.Color(255,50,50)
 
         self._resize_display(_WINDOW_SIZE)
@@ -156,14 +156,19 @@ class ThreeDApp:
         '''
         self._surface = pygame.display.set_mode(size, pygame.RESIZABLE)
 
-    def _translate_to_origin(self, coordinate, origin = None) -> (float, float):
+    def _translate_to_origin(self, coordinate, origin = None, fov = 70) -> (float, float):
         '''
         This will flip the image upside down and move the coordinate so its centered around the vertex,
-        default being the middle of the window. (Like an x,y plane)
+        default being the middle of the window. (Like an x,y plane).
+        The fov will basically place a fovxfov size box and only include whats in that in the final result
+        as it will scale everything else out (IT FINALLY WORKS FOV WAS THE TRICK YES!!!!)
         '''
+        multiplier = min(self._surface.get_width(),self._surface.get_height())/fov
+
         if origin == None:
             origin = (self._surface.get_width()/2, self._surface.get_height()/2)
-        returning = (coordinate[0]+origin[0], origin[1]-coordinate[1])
+        returning = (coordinate[0]*multiplier+origin[0], origin[1]-coordinate[1]*multiplier)
+
         return returning
 
 if __name__ == '__main__':
