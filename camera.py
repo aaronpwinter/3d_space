@@ -33,11 +33,18 @@ class Camera:
         fraction = (-self._focus[2])/intersection_finder[2]
         return Vector(fraction*intersection_finder[0], fraction*intersection_finder[1])
 
-    def move_focus(self, v: vector):
+    def move_focus(self, v: Vector):
         '''
         This will just make the camera look funny - mainly for experimental purposes.
         '''
+        self._focus += v
 
+    def move_location(self, v: Vector):
+        '''
+        This will move where the focus point is in 3D space. (relative to the rotation)
+        '''
+        v = self._rot*v
+        self._loc += v
 
 
 if __name__ == '__main__':

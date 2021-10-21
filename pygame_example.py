@@ -55,7 +55,7 @@ class ThreeDApp:
         Runs everything before the main loop (and after __init__)
         '''
         #Camera Stuffs
-        rotation = Rotation(.2,.2,0)
+        rotation = Rotation(0,0,0)
         self._cam = Camera(rotation = rotation)
 
         #Example shapes
@@ -88,6 +88,26 @@ class ThreeDApp:
         Checks which keys are being pressed down and acts on them.
         '''
         keys = pygame.key.get_pressed()
+
+        movement = [0,0,0]
+
+        to_move = 10
+        if keys[pygame.K_LCTRL]:
+            to_move *= 5
+        if keys[pygame.K_LSHIFT]:
+            movement[1] = movement[1] +-to_move
+        if keys[pygame.K_SPACE]:
+            movement[1] = movement[1] +to_move
+        if keys[pygame.K_a]:
+            movement[0] = movement[0] +-to_move
+        if keys[pygame.K_d]:
+            movement[0] = movement[0] +to_move
+        if keys[pygame.K_s]:
+            movement[2] = movement[2] +-to_move
+        if keys[pygame.K_w]:
+            movement[2] = movement[2] +to_move
+
+        self._cam.move_location(Vector(*movement))
 
     def _handle_mouse(self) -> None:
         '''

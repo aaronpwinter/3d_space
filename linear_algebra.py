@@ -83,6 +83,9 @@ class Vector:
             return Vector(*(i+j for i,j in zip(self, right)))
         elif type(right) in {int, float}: #When right is a number, add said number to each of the components of this vector
             return Vector(*(i+right for i in self))
+        elif type(right) is tuple:
+            assert self.dimension() == len(right)
+            return Vector(*(i+j for i,j in zip(self, right)))
         else:
             return NotImplemented
 
@@ -95,6 +98,9 @@ class Vector:
             return Vector(*(i-j for i,j in zip(self, right)))
         elif type(right) in {int, float}: #When right is a number, subtract said number from each of the components of this vector
             return Vector(*(i-right for i in self))
+        elif type(right) is tuple:
+            assert self.dimension() == len(right)
+            return Vector(*(i-j for i,j in zip(self, right)))
         else:
             return NotImplemented
 
