@@ -5,7 +5,7 @@ SANITIZATION_LIMIT = .000001 #Used to convert |values| < this to 0
 
 
 class Vector:
-    def __init(self, *values):
+    def __init__(self, *values):
         self._values = [*values]
 
     def dimension(self) -> int:
@@ -83,6 +83,8 @@ class Vector:
             return Vector(*(i+j for i,j in zip(self, right)))
         elif type(right) in {int, float}: #When right is a number, add said number to each of the components of this vector
             return Vector(*(i+right for i in self))
+        else:
+            return NotImplemented
 
     def __radd__(self, left):
         return self + left
@@ -93,16 +95,20 @@ class Vector:
             return Vector(*(i-j for i,j in zip(self, right)))
         elif type(right) in {int, float}: #When right is a number, subtract said number from each of the components of this vector
             return Vector(*(i-right for i in self))
+        else:
+            return NotImplemented
 
     def __mul__(self, right):
         '''
         When "multiplying" with another Vector, returns the dot product.
         '''
-        if isinstance(right, vector):
+        if isinstance(right, Vector):
             assert self.dimension() == right.dimension()
             return sum(i*j for i,j in zip(self, right))
         elif type(right) in {int, float}: #When right is a number, multiply said number to each of the components of this vector
             return Vector(*(i*right for i in self))
+        else:
+            return NotImplemented
     
     def __rmul__(self, left):
         return self * left
@@ -110,6 +116,8 @@ class Vector:
     def __truediv__(self, right):
         if type(right) in {int, float}: #Divide each of the components by right
             return Vector(*(i/right for i in self))
+        else:
+            return NotImplemented
     
     def __str__(self):
         return '(' + ', '.join(str(i) for i in self) + ')'
@@ -269,7 +277,7 @@ class Matrix:
             assert right.dimension() == self.columns()
             return self@Matrix(right)
         else:
-            raise TypeError()
+            return NotImplemented
 
     def __rmul__(self, left):
         if isinstance(left, Vector):
@@ -286,7 +294,10 @@ class Matrix:
             assert self.columns() == right.rows()
             return Matrix([self.row_vector(row)*right.column_vector(col) for col in range(right.columns())] for row in range(self.rows()))
         elif isinstance(right, Vector):
+            assert right.dimension() == self.columns()
             return self@Matrix(right)
+        else:
+            return NotImplemented
 
     def __getitem__(self, index):
         '''
