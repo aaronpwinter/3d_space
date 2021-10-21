@@ -57,7 +57,8 @@ if __name__ == '__main__':
 
     v = Vector(1,2,3)
     
-    v2 = r*v
+    v2 = r*v #Im gonna be honest, idk if this works, but at least its now easy to edit and try again once i get gui working
+                #Also, thats why this is the prototype for cpp, imagine trying to debug in that maaaaan
     print(v2)
     v3 = r/v2
     print(v3)
