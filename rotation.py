@@ -7,7 +7,8 @@ class Rotation:
       rotation of something. Will also provide Matricies for rotating
       vectors about its x, y, and z directions. Uses radians.
     Rotation order is the order in which you will rotate around the axises (?),
-      defaulting to y -> x -> z
+      defaulting to y -> x -> z (go in inverse order if you want it to be relative to the last rotation,
+      like is being done now)
     '''
     def __init__(self, x: float, y: float, z: float, rotation_order: (int) = (2,0,1)):
         self._x = x

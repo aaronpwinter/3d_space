@@ -108,7 +108,7 @@ class ThreeDApp:
             movement[2] = movement[2] +to_move
 
         if movement != [0,0,0]:
-            self._cam.move_location(Vector(*movement))
+            self._cam.move(Vector(*movement))
 
     def _handle_mouse(self) -> None:
         '''
@@ -140,7 +140,7 @@ class ThreeDApp:
         for vertex in self._rectangle:
             new_v, relative = self._cam(Vector(*vertex))
             if relative != Camera.IN_FRONT: behind = True
-            rect_trans.append(self._translate_to_origin(new_v))
+            rect_trans.append(new_v)#self._translate_to_origin(new_v))
         
         if not behind: pygame.draw.polygon(self._surface, self._rect_color, rect_trans)
 
@@ -157,6 +157,7 @@ class ThreeDApp:
         Resizes the display.
         '''
         self._surface = pygame.display.set_mode(size, pygame.RESIZABLE)
+        self._cam.resize(size)
 
     def _translate_to_origin(self, coordinate, origin = None, fov = 70) -> (float, float):
         '''
@@ -164,6 +165,8 @@ class ThreeDApp:
         default being the middle of the window. (Like an x,y plane).
         The fov will basically place a fovxfov size box and only include whats in that in the final result
         as it will scale everything else out (IT FINALLY WORKS FOV WAS THE TRICK YES!!!!)
+
+        Implemented in camera
         '''
         multiplier = min(self._surface.get_width(),self._surface.get_height())/fov
 

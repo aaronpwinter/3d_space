@@ -2,6 +2,8 @@ from linear_algebra import Vector
 from rotation import Rotation
 
 _DEFAULT_FOCUS = (0,0,-100)
+_DEFAULT_LOCATION = (0,0,-10)
+_DEFAULT_FOV = 70
 
 class Camera:
     '''
@@ -9,19 +11,25 @@ class Camera:
     Will basically:
         Subtract target vector by location. Location also represents where the focus point screen is.
         Rotate target vector by rotation (inverse)
-        Find where on x,y plane the line between the target vector and focus (not the same as location) land
+        Find where on x,y plane the line between the target vector and focus (not the same as location) land.
+    Screen size & FOV will only be considered if screen size is set. If so, will convert the 2D coordinate
+    to being on a traditional XY plane and also do FOV things. Very important for looking good.
     '''
     IN_FRONT = 0 #In front of screen
     BETWEEN = 1 #Between screen and focus
     BEHIND = 2 #Behind focus
 
-    def __init__(self, location: Vector = Vector(0,0,-10), focus: Vector = Vector(*_DEFAULT_FOCUS),
-                        rotation: Rotation = Rotation(0,0,0)):
+    def __init__(self, location: Vector = Vector(*_DEFAULT_LOCATION), focus: Vector = Vector(*_DEFAULT_FOCUS),
+                        rotation: Rotation = Rotation(0,0,0),
+                        screen_size: (int, int) = None, fov = _DEFAULT_FOV):
         assert location.dimension() == 3
         assert focus.dimension() == 3
         self._loc = location
         self._focus = focus
         self._rot = rotation
+
+        self._screen = screen_size
+        self._fov = fov
 
     def __call__(self, v: Vector) -> '2D Vector':
         '''
@@ -39,6 +47,19 @@ class Camera:
         fraction = (-self._focus[2])/intersection_finder[2]
         returning = Vector(fraction*intersection_finder[0], fraction*intersection_finder[1])
 
+        #FOV Stuffs
+        if self._screen != None:
+            '''
+            This will flip the image upside down and move the coordinate so its centered around the vertex,
+            default being the middle of the window. (Like an x,y plane).
+            The fov will basically place a fovxfov size box and only include whats in that in the final result
+            as it will scale everything else out (IT FINALLY WORKS FOV WAS THE TRICK YES!!!!)
+            '''
+            fov_mult = min(self._screen[0], self._screen[1])/self._fov
+
+            #Will make origin (0,0) middle of screen
+            returning = Vector((returning[0]*fov_mult)+(self._screen[0]/2), (self._screen[1]/2)-(returning[1]*fov_mult))
+
         if trans_v[2] <= 0: return returning, self.BETWEEN
         return returning, self.IN_FRONT
         #Where the v vector is relative to focus and screen
@@ -49,7 +70,7 @@ class Camera:
         '''
         self._focus += v
 
-    def move_location(self, v: Vector):
+    def move(self, v: Vector):
         '''
         This will move where the focus point is in 3D space. (relative to the rotation)
         '''
@@ -67,6 +88,12 @@ class Camera:
         Returns the vector that represents the location -> v
         '''
         return v-self._loc
+
+    def resize(self, screen_size: (int, int)):
+        '''
+        For when you change the screen size.
+        '''
+        self._screen = screen_size
 
 
 if __name__ == '__main__':
