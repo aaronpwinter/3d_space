@@ -138,6 +138,7 @@ class Matrix:
                 self._matrix.append([j for j in i]) #Append a list to the matrix which contains all the values of this part of the 2D array.
             else: #1D iterable.
                 self._matrix.append([i])
+        self._verify()
 
     def sanitize(self):
         '''
@@ -147,6 +148,82 @@ class Matrix:
             for col in range(len(self._matrix[row])):
                 if abs(self._matrix[row][col]) < SANITIZATION_LIMIT: self._matrix[row][col] = 0
                 
+    def rows(self) -> int:
+        return len(self._matrix)
+
+    def columns(self) -> int:
+        return len(self._matrix[0])
+
+    def column_vector(self, col: int) -> Vector:
+        '''
+        Returns the column vector of the given column in the matrix.
+        '''
+        return Vector(*(i[col] for i in self._matrix))
+
+    def row_vector(self, row: int) -> Vector:
+        '''
+        Returns the row vector of the given row in the matrix.
+        '''
+        return Vector(*self[row])
+
+    def transpose(self) -> 'Matrix':
+        '''
+        Will create a new Matrix which is transposed.
+        '''
+        return Matrix([[self[col,row] for row in range(self.rows())] for col in range(self.columns())])
+
+    def determinant(self) -> float:
+        '''
+        Returns the determinant of the matrix.
+        Works recursively. Also determines the determinant using the top row, if you care.
+        '''
+        assert self.square()
+        if self.rows() == 1:
+            return self[0,0]
+        return sum(self[x,0]*self.exclude(x,0).determinant()*(1 if x%2==0 else -1) for x in range(self.columns()))
+
+    def cofactor(self, x: int, y: int) -> float:
+        '''
+        Returns the cofactor of a given position in the Matrix.
+        This is the determinant of the matrix if the given position's row
+          and column were completely missing, and also factors in the negative (if the x+y are odd).
+        '''
+        return self.exclude(x,y).determinant()*(1 if (x+y)%2 == 0 else -1)
+
+    def cofactor_matrix(self) -> 'Matrix':
+        '''
+        Returns the cofactor matrix of this one, which is just the same
+        matrix except each value is replaced by the cofactor of that spot.
+        '''
+        return Matrix([self.cofactor(x,y) for x in range(self.columns())] for y in range(self.rows()))
+
+    def inverse(self) -> 'Matrix':
+        '''
+        Returns an inverse of the current matrix, which is 1/determinant
+           times the transposed cofactor matrix.
+        '''
+        assert self.determinant() != 0
+        return 1/self.determinant() * self.cofactor_matrix().transpose()
+
+    def exclude(self, col: int, row: int) -> 'Matrix':
+        '''
+        Returns the matrix, but without the whole col column and row row.
+        '''
+        return Matrix([self[x,y] for x in range(self.columns()) if x != col] for y in range(self.rows()) if y != row)
+
+    def augment(self, m2) -> 'Matrix':
+        '''
+        Creates a new matrix which is this Matrix with m2's values added to the right of this matrix. [[1,2,3]] + [[4,5,6]] = [[1,2,3,4,5,6]]
+        '''
+        assert self.rows() == m2.rows()
+        return Matrix([[(self[x,y] if x < self.columns() else m2[x-self.columns(),y]) for x in range(self.columns()+m2.columns())] for y in range(self.rows())])
+
+    def square(self) -> bool:
+        '''
+        Returns if this matrix is a square matrix
+        '''
+        return self.rows() == self.columns()
+
     #Private methods
     def _verify(self):
         '''
@@ -174,3 +251,30 @@ class Matrix:
             return Matrix([ [math.cos(angle),   -math.sin(angle),   0],
                             [math.sin(angle),   math.cos(angle),    0],
                             [0,                 0,                  1]])
+
+    #Dunder methods
+    def __str__(self):
+        return '[' + '\n'.join(', '.join(str(j) for j in i) for i in self._matrix) + ']'
+
+    def __repr__(self):
+        return 'Matrix(' + str(self._matrix) + ')'
+
+    def __mul__(self, right):
+        if type(right) in {int, float}:
+            return Matrix((self[x,y]*right for x in range(len(self._matrix[y]))) for y in range(len(self._matrix)))
+        elif isinstance(right, Matrix): #Multiply each value to the value in the equivalent spot in the other matrix
+            assert self.columns() == right.columns() and self.rows() == right.rows()
+            return Matrix((self[x,y]*right[x,y] for x in range(len(self._matrix[y]))) for y in range(len(self._matrix)))
+        elif isinstance(right, Vector): #Do matrix multiplication with the vector
+            assert right.dimension() == self.columns()
+            return self@Matrix(right)
+        else:
+            raise TypeError()
+
+    def __rmul__(self, left):
+        if isinstance(left, Vector):
+            assert left.dimension() == self.rows()
+            return Matrix(left).transpose()@self
+        return self*left
+
+    
