@@ -136,11 +136,13 @@ class ThreeDApp:
 
         #Example rectangle
         rect_trans = []
+        behind = False
         for vertex in self._rectangle:
-            new_v = self._cam(Vector(*vertex))
+            new_v, relative = self._cam(Vector(*vertex))
+            if relative != Camera.IN_FRONT: behind = True
             rect_trans.append(self._translate_to_origin(new_v))
         
-        pygame.draw.polygon(self._surface, self._rect_color, rect_trans)
+        if not behind: pygame.draw.polygon(self._surface, self._rect_color, rect_trans)
 
         pygame.display.flip()
 

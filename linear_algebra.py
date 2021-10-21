@@ -40,6 +40,12 @@ class Vector:
         for i in range(len(self)):
             if abs(self[i]) < SANITIZATION_LIMIT: self[i] = 0
 
+    def angle_diff(self, v: 'Vector') -> float:
+        '''
+        Returns the angle between this vector and v.
+        u*v/|u|*|v|
+        '''
+        return math.acos((self*v)/(self.mag()*v.mag()))
 
     #Private methods
     pass
