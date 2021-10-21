@@ -277,4 +277,36 @@ class Matrix:
             return Matrix(left).transpose()@self
         return self*left
 
-    
+    def __matmul__(self,right):
+        '''
+        In case I forget, multiplies the row vectors of this Matrix by
+        the column vectors of the other Matrix
+        '''
+        if isinstance(right, Matrix):
+            assert self.columns() == right.rows()
+            return Matrix([self.row_vector(row)*right.column_vector(col) for col in range(right.columns())] for row in range(self.rows()))
+        elif isinstance(right, Vector):
+            return self@Matrix(right)
+
+    def __getitem__(self, index):
+        '''
+        Can do matrix[y][x] or matrix[x,y]. Works with slice notation.
+        '''
+        if type(index) is slice: #This will return multiple rows (as a new Matrix)
+            return Matrix(self._matrix[index])
+        elif type(index) is int: #Will return a row, so you can do [y][x]
+            return self._matrix[index]
+        elif type(index) is tuple: #[x, y], slice notation
+            if len(index) != 2: raise TypeError()
+            new_matrix = None
+            if type(index[1]) is int: new_matrix = [self._matrix[index[1]]]
+            elif type(index[1]) is slice: new_matrix = self._matrix[index[1]]
+            for row in len(new_matrix):
+                if type(index[0]) is int: new_matrix[row] = [new_matrix[row][index[0]]]
+                elif type(index[0]) is slice: new_matrix[row] = new_matrix[row][index[0]]
+            return Matrix(new_matrix) if (len(new_matrix) != 1 or len(new_matrix[0]) != 1) else new_matrix[0][0]
+        else:
+            raise TypeError()
+
+
+
