@@ -301,7 +301,7 @@ class Matrix:
             new_matrix = None
             if type(index[1]) is int: new_matrix = [self._matrix[index[1]]]
             elif type(index[1]) is slice: new_matrix = self._matrix[index[1]]
-            for row in len(new_matrix):
+            for row in range(len(new_matrix)):
                 if type(index[0]) is int: new_matrix[row] = [new_matrix[row][index[0]]]
                 elif type(index[0]) is slice: new_matrix[row] = new_matrix[row][index[0]]
             return Matrix(new_matrix) if (len(new_matrix) != 1 or len(new_matrix[0]) != 1) else new_matrix[0][0]
@@ -310,3 +310,12 @@ class Matrix:
 
 
 
+if __name__ == '__main__':
+
+    a = Matrix([[1,2,3],
+                [4,5,6],
+                [7,8,9]])
+    assert a[1,2] == 8
+    assert a[2][1] == 8
+
+    
