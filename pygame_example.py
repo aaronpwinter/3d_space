@@ -55,7 +55,7 @@ class ThreeDApp:
         Runs everything before the main loop (and after __init__)
         '''
         #Camera Stuffs
-        rotation = Rotation(0,0,0)
+        rotation = Rotation(.2,.2,0)
         self._cam = Camera(rotation = rotation)
 
         #Example shapes

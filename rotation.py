@@ -9,7 +9,7 @@ class Rotation:
     Rotation order is the order in which you will rotate around the axises (?),
       defaulting to y -> x -> z
     '''
-    def __init__(self, x: float, y: float, z: float, rotation_order: (int) = (1,0,2)):
+    def __init__(self, x: float, y: float, z: float, rotation_order: (int) = (2,0,1)):
         self._x = x
         self._y = y
         self._z = z
