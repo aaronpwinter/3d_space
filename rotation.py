@@ -38,6 +38,11 @@ class Rotation:
         if index == 1 or index == 'y': return self._y
         if index == 2 or index == 'z': return self._z
 
+    def __setitem__(self, index, value):
+        if index == 0 or index == 'x': self._x = value
+        if index == 1 or index == 'y': self._y = value
+        if index == 2 or index == 'z': self._z = value
+
     
     def __mul__(self, right):
         '''

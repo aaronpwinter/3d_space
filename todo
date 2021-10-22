@@ -1,8 +1,3 @@
-Create base_object class and model class, where base_object is something like a shape that exists in 3d space, and model is both a collection of shapes and other objects.
-All base shapes will have a mid point, which should be calculated by just averaging all the verticies of the shape. Base shapes can also have things like colors, locations, and rotation.
-Models will then use multiple base shapes to make up the model. The base objects will have their locations be relative to the center of the model. Models can also have a location and rotation, which it would then apply onto the other base shapes and models which make up the model.
-
-When rendering, first load all shape verticies after transformation into a list, with distances/vector from focus to center attached. Sort list by that distance from farthest to closest. Then draw all base shapes.
-Also, possibly compute the cross product of each base shape's edges, and then find angle between that normal line and the focus->center vector, in order to do shading (as if light source coming from camera).
+Need some way to order drawing the individual shapes...
 
 c++...

@@ -72,6 +72,8 @@ class Vector:
         assert vectors[0].dimension() - 1 == len(vectors)
         assert all(vectors[0].dimension() == i.dimension() for i in vectors)
 
+        da_matrix = Matrix(vectors)
+        return Vector(*(da_matrix.cofactor(x, -2) for x in range(len(vectors)+1)))
 
     #Dunder methods
     def __iter__(self):

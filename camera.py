@@ -1,5 +1,6 @@
 from linear_algebra import Vector
 from rotation import Rotation
+import math
 
 _DEFAULT_FOCUS = (0,0,-100)
 _DEFAULT_LOCATION = (0,0,-10)
@@ -40,7 +41,7 @@ class Camera:
         trans_v = self._rot/trans_v #Rotate it (inverse)
         trans_v = trans_v + self._focus
 
-        if trans_v[2] <= self._focus[2]: return Vector(0,0), self.BEHIND
+        if trans_v[2] <= self._focus[2]: return Vector(0,0), self.BEHIND, trans_v[2]
 
         intersection_finder = trans_v - self._focus #Vector from focus to translated vector
         #Now, intersection is when z=0, and z=0 at -self._focus[z]/intersection_finder[z]
@@ -60,8 +61,8 @@ class Camera:
             #Will make origin (0,0) middle of screen
             returning = Vector((returning[0]*fov_mult)+(self._screen[0]/2), (self._screen[1]/2)-(returning[1]*fov_mult))
 
-        if trans_v[2] <= 0: return returning, self.BETWEEN
-        return returning, self.IN_FRONT
+        if trans_v[2] <= 0: return returning, self.BETWEEN, trans_v[2]
+        return returning, self.IN_FRONT, trans_v[2]
         #Where the v vector is relative to focus and screen
 
     def move_focus(self, v: Vector):
@@ -72,16 +73,17 @@ class Camera:
 
     def move(self, v: Vector):
         '''
-        This will move where the focus point is in 3D space. (relative to the rotation)
+        This will move where the focus point is in 3D space. (relative to the rotation).
         '''
         v = self._rot*v
         self._loc += v
 
     def rotate(self, r: Rotation):
         '''
-        Rotates the camera, relative to where its currently looking
+        Rotates the camera, relative to where its currently looking. Will not let x rotation go over 90deg or under 90deg
         '''
         self._rot += r
+        self._rot[0] = max(-math.pi/2, min(math.pi/2, self._rot[0]))
 
     def focus_to(self, v: Vector) -> Vector:
         '''
